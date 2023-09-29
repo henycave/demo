@@ -14,6 +14,11 @@ class TabataHomePage extends StatefulWidget {
 }
 
 class _TabataHomePageState extends State<TabataHomePage> {
+  FixedExtentScrollController roundController = FixedExtentScrollController();
+  FixedExtentScrollController workController = FixedExtentScrollController();
+  FixedExtentScrollController restController = FixedExtentScrollController();
+
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TabataProvider>(context);
@@ -21,7 +26,7 @@ class _TabataHomePageState extends State<TabataHomePage> {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+             // Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back_ios)),
         actions: <Widget>[
@@ -31,7 +36,7 @@ class _TabataHomePageState extends State<TabataHomePage> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              //Navigator.pop(context);
             },
           )
         ],
@@ -39,7 +44,6 @@ class _TabataHomePageState extends State<TabataHomePage> {
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: SingleChildScrollView(
@@ -49,15 +53,12 @@ class _TabataHomePageState extends State<TabataHomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             "TABATA",
-                            style: TextStyle(
-                                fontSize: 36,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                            style: kLargeTextStyle.copyWith(fontWeight: FontWeight.bold)
                           ),
                         ],
                       ),
@@ -66,33 +67,36 @@ class _TabataHomePageState extends State<TabataHomePage> {
                         children: [
                           const Text("Set your Tabata Timer",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 20)),
+                                  kNormalTextStyle),
                           CustomDropDown(
+                            controller: roundController,
                             dropDownList: roundsDropDownList,
                             label: "Round",
-                            onChanged: (index) {
-                              provider.rounds = roundsDropDownList[index];
-                              print(provider.rounds);
+                            onChanged: () {
+                              provider.rounds = roundsDropDownList[roundController.selectedItem];
+                              Navigator.pop(context);
                             },
                             value: provider.rounds,
                             isRound: true,
                           ),
                           CustomDropDown(
+                            controller: workController,
                             dropDownList: workDropDownList,
                             label: "Work",
-                            onChanged: (index) {
-                              provider.work = workDropDownList[index].time;
-                              print(provider.work);
+                            onChanged: () {
+                              provider.work = workDropDownList[workController.selectedItem].time;
+                              Navigator.pop(context);
                             },
                             value:
                                 "${provider.work.inMinutes.remainder(60).toString().padLeft(2, '0')} :${provider.work.inSeconds.remainder(60).toString().padLeft(2, '0')}",
                           ),
                           CustomDropDown(
+                            controller: restController,
                             dropDownList: restDropDownList,
                             label: "Rest",
-                            onChanged: (index) {
-                              provider.rest = restDropDownList[index].time;
-                              print(provider.rest);
+                            onChanged: () {
+                              provider.rest = restDropDownList[restController.selectedItem].time;
+                              Navigator.pop(context);
                             },
                             value:
                                 "${provider.rest.inMinutes.remainder(60).toString().padLeft(2, '0')} :${provider.rest.inSeconds.remainder(60).toString().padLeft(2, '0')}",
@@ -109,7 +113,7 @@ class _TabataHomePageState extends State<TabataHomePage> {
                               ),
                               Text(
                                 "Add sets(optional)",
-                                style: TextStyle(color: Colors.white),
+                                style: kSmallTextStyle,
                               ),
                             ],
                           )
@@ -134,7 +138,7 @@ class _TabataHomePageState extends State<TabataHomePage> {
                     ),
                     Text(
                       "Add notes",
-                      style: TextStyle(color: Colors.white),
+                      style: kSmallTextStyle,
                     ),
                   ],
                 ),
@@ -157,18 +161,15 @@ class _TabataHomePageState extends State<TabataHomePage> {
                         color: Colors.green.shade300,
                         borderRadius: BorderRadius.circular(40.0),
                       ),
-                      child: const Column(
+                      child: Column(
                         children: [
                           Text(
                             "START TIMER",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
+                            style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold),
                           ),
-                          Text(
+                          const Text(
                             "total time: 16:79",
-                            style: TextStyle(color: Colors.white),
+                            style: kSmallTextStyle,
                           ),
                         ],
                       ),

@@ -1,5 +1,7 @@
 
-  import 'models/timeChoice.dart';
+  import 'package:flutter/material.dart';
+
+import 'models/timeChoice.dart';
 
 
 
@@ -28,3 +30,8 @@
     TimeChoice(choice: "4 seconds", time: const Duration(seconds: 4)),
     TimeChoice(choice: "5 seconds", time: const Duration(seconds: 5)),
   ];
+
+  const kNormalTextStyle = TextStyle(color: Colors.white, fontSize: 20);
+  const kSmallTextStyle = TextStyle(color: Colors.white, fontSize: 15);
+  const kMediumTextStyle = TextStyle(color: Colors.white, fontSize: 30);
+  const kLargeTextStyle = TextStyle(color: Colors.white, fontSize: 36);

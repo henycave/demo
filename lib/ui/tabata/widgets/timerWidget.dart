@@ -1,3 +1,4 @@
+import 'package:demo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -24,10 +25,8 @@ class TimerWidget extends StatefulWidget {
 
 class _TimerWidgetState extends State<TimerWidget> {
 
-
   @override
   void initState() {
-
     super.initState();
   }
 
@@ -49,7 +48,7 @@ class _TimerWidgetState extends State<TimerWidget> {
             backgroundColor: Colors.transparent,
             radius: 172.0,
             lineWidth: 18.0,
-            percent: 1 - (provider.current.inSeconds / widget.percentSeconds),
+            percent: !provider.onIntro? 1 - (provider.current.inSeconds / widget.percentSeconds):0,
             //center: const Text("100%"),
             progressColor: Colors.green,
           ),
@@ -64,7 +63,9 @@ class _TimerWidgetState extends State<TimerWidget> {
                       children: !provider.isPaused
                           ? [
                               MaterialButton(
-                                onPressed: (){widget.onStart();},
+                                onPressed: () {
+                                  widget.onStart();
+                                },
                                 child: const Icon(
                                   Icons.play_arrow,
                                   color: Colors.green,
@@ -73,13 +74,14 @@ class _TimerWidgetState extends State<TimerWidget> {
                               ),
                               const Text(
                                 "tap to start",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
+                                style: kNormalTextStyle,
                               ),
                             ]
                           : [
                               MaterialButton(
-                                onPressed: (){widget.onResume();},
+                                onPressed: () {
+                                  widget.onResume();
+                                },
                                 child: const Icon(
                                   Icons.pause,
                                   color: Colors.green,
@@ -88,8 +90,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                               ),
                               const Text(
                                 "tap to resume",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
+                                style: kNormalTextStyle,
                               ),
                             ],
                     )
@@ -98,14 +99,20 @@ class _TimerWidgetState extends State<TimerWidget> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            "${provider.current.inMinutes.remainder(60).toString().padLeft(2, '0')} :${provider.current.inSeconds.remainder(60).toString().padLeft(2, '0')}",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 80),
-                          ),
+                          !provider.onIntro
+                              ? Text(
+                                  "${provider.current.inMinutes.remainder(60).toString().padLeft(2, '0')}:${provider.current.inSeconds.remainder(60).toString().padLeft(2, '0')}",
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 80),
+                                )
+                              : Text(
+                                  provider.current.inSeconds.toString(),
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 80),
+                                ),
                           const Text(
                             "tap to pause",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
+                            style: kNormalTextStyle,
                           ),
                         ],
                       ),

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:demo/constants.dart';
 import 'package:demo/models/timeChoice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class CustomDropDown extends StatelessWidget {
       required this.onChanged,
       required this.value,
       this.isRound = false,
+      required this.controller,
       });
 
   final List<dynamic> dropDownList;
@@ -19,6 +21,7 @@ class CustomDropDown extends StatelessWidget {
   final Function onChanged;
   final String value;
   final bool isRound;
+  final FixedExtentScrollController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +44,11 @@ class CustomDropDown extends StatelessWidget {
                     ),
                     Center(
                         child: MaterialButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () => onChanged(),
                       color: Colors.black,
                       child: const Text(
                         "OK",
-                        style: TextStyle(color: Colors.white),
+                        style: kNormalTextStyle,
                       ),
                     )),
                   ],
@@ -59,15 +60,16 @@ class CustomDropDown extends StatelessWidget {
                     height: 240,
                     width: 80,
                     child: CupertinoPicker(
+                      scrollController: controller,
                       backgroundColor: Colors.black,
                       itemExtent: 64,
-                      onSelectedItemChanged: (index) => onChanged(index),
+                      //onSelectedItemChanged: (index) => onChanged(index),
+                      onSelectedItemChanged: (int value) {  },
                       children: dropDownList
                           .map((e) => Center(
                                   child: Text(
                                 isRound? e: e.choice ,
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 32),
+                                style: kMediumTextStyle
                               )))
                           .toList(),
                     ),
@@ -79,7 +81,6 @@ class CustomDropDown extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 15),
             child: Container(
-              //alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 25),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.greenAccent, width: 2.0),
@@ -87,7 +88,7 @@ class CustomDropDown extends StatelessWidget {
               ),
               child: Text(
                 value,
-                style: const TextStyle(color: Colors.white, fontSize: 20),
+                style: kNormalTextStyle,
               ),
             ),
           ),
@@ -97,7 +98,7 @@ class CustomDropDown extends StatelessWidget {
         ),
         Text(
           label,
-          style: const TextStyle(color: Colors.white, fontSize: 30),
+          style: kMediumTextStyle,
         )
       ],
     );

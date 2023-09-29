@@ -1,7 +1,7 @@
 // import 'package:circular_seek_bar/circular_seek_bar.dart';
 import 'dart:async';
 import 'dart:collection';
-import 'package:demo/ui/tabata/widgets/timer.dart';
+import 'package:demo/ui/tabata/widgets/timerWidget.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
 
+import '../../constants.dart';
 import '../../providers/tabata_provider.dart';
 // import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
@@ -60,7 +61,7 @@ class _TabataTimerPageState extends State<TabataTimerPage> {
             .currentPercentSeconds = duration.inSeconds;
       }
 
-      _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer){
         if (duration.inSeconds > 0) {
           duration = Duration(seconds: duration.inSeconds - 1);
           Provider.of<TabataProvider>(context, listen: false).current =
@@ -69,7 +70,7 @@ class _TabataTimerPageState extends State<TabataTimerPage> {
           stopTimer();
         }
         if (_timer == null) {
-          //await Future.delayed(const Duration(seconds: 1));
+          Provider.of<TabataProvider>(context, listen: false).onIntro = false;
           startNextTimer();
         }
       });
@@ -90,16 +91,16 @@ class _TabataTimerPageState extends State<TabataTimerPage> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<TabataProvider>(context);
-    print(provider.onRest);
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
             "TABATA",
-            style: TextStyle(color: Colors.white),
+            style: kNormalTextStyle,
           ),
           leading: IconButton(
               onPressed: () {

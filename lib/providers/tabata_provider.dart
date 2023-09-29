@@ -13,6 +13,7 @@ class TabataProvider extends ChangeNotifier {
   bool _isPaused = false;
   bool _isComplete = false;
   bool _onRest = false;
+  bool _onIntro = true;
 
   String get rounds => _rounds;
 
@@ -33,6 +34,8 @@ class TabataProvider extends ChangeNotifier {
   bool get isComplete => _isComplete;
 
   bool get onRest => _onRest;
+
+  bool get onIntro => _onIntro;
 
   set rounds(String value) {
     _rounds = value;
@@ -84,6 +87,11 @@ class TabataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  set onIntro(bool value) {
+    _onIntro = value;
+    notifyListeners();
+  }
+
   void resetFromState() {
     current = const Duration(seconds: 10);
     currentPercentSeconds = 10;
@@ -92,5 +100,6 @@ class TabataProvider extends ChangeNotifier {
     isComplete = false;
     roundCounter = 1;
     onRest = false;
+    onIntro = true;
   }
 }

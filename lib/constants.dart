@@ -3,31 +3,6 @@
 
 
 
-  // final List<String> workDropDownList = [
-  //   "5 seconds",
-  //   "6 seconds",
-  //   "7 seconds",
-  //   "8 seconds",
-  //   "9 seconds",
-  //   "10 seconds",
-  //   "11 seconds",
-  //   "12 seconds",
-  //   "13 seconds",
-  //   "14 seconds",
-  // ];
-
-  // final List<String> restDropDownList = [
-  //   "0 seconds",
-  //   "1 seconds",
-  //   "2 seconds",
-  //   "3 seconds",
-  //   "4 seconds",
-  //   "10 seconds",
-  //   "11 seconds",
-  //   "12 seconds",
-  //   "13 seconds",
-  //   "14 seconds",
-  // ];
   final List<String> roundsDropDownList = [
     "1",
     "2",

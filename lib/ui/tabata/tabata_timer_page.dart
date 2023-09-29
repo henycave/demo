@@ -1,9 +1,15 @@
 // import 'package:circular_seek_bar/circular_seek_bar.dart';
 import 'dart:async';
+import 'dart:collection';
+import 'package:demo/ui/tabata/widgets/timer.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:rive/rive.dart';
+
+import '../../providers/tabata_provider.dart';
 // import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
 class TabataTimerPage extends StatefulWidget {
@@ -14,31 +20,80 @@ class TabataTimerPage extends StatefulWidget {
 }
 
 class _TabataTimerPageState extends State<TabataTimerPage> {
-  Duration seconds = const Duration(minutes: 2);
-  bool isRunning = false;
-  bool isPaused = false;
+  late Duration rest;
+  late Duration work;
+  late int rounds;
   Timer? _timer;
+  var timerQueue = Queue<Duration>();
 
-  void startTimer() {
-    //seconds = DateFormat('hh:mm:ss').format(seconds);
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!seconds.isNegative) {
-        setState(() {
-          seconds = Duration(seconds: seconds.inSeconds - 1);
-          //seconds--;
-        });
-      } else {
-        stopTimer();
+  void startSet() {
+    timerQueue.add(const Duration(seconds: 10));
+    for (var i = 0; i < rounds; i++) {
+      timerQueue.add(work);
+      if (rest.inSeconds != 0) {
+        timerQueue.add(const Duration(days: 1));
+        timerQueue.add(rest);
       }
-    });
+      if (rounds - 1 != i) {
+        timerQueue.add(const Duration());
+      }
+    }
+    startNextTimer();
+  }
+
+  void startNextTimer({bool isOnResume = false}) async {
+    if (timerQueue.isEmpty) {
+      Provider.of<TabataProvider>(context, listen: false).isComplete = true;
+      return;
+    }
+    var duration = timerQueue.removeFirst();
+    if (duration.inSeconds == 0) {
+      Provider.of<TabataProvider>(context, listen: false).roundCounter++;
+      Provider.of<TabataProvider>(context, listen: false).onRest = false;
+      startNextTimer();
+    } else if (duration.inDays == 1) {
+      Provider.of<TabataProvider>(context, listen: false).onRest = true;
+      startNextTimer();
+    } else {
+      if (!isOnResume) {
+        Provider.of<TabataProvider>(context, listen: false)
+            .currentPercentSeconds = duration.inSeconds;
+      }
+
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+        if (duration.inSeconds > 0) {
+          duration = Duration(seconds: duration.inSeconds - 1);
+          Provider.of<TabataProvider>(context, listen: false).current =
+              duration;
+        } else {
+          stopTimer();
+        }
+        if (_timer == null) {
+          //await Future.delayed(const Duration(seconds: 1));
+          startNextTimer();
+        }
+      });
+    }
   }
 
   void stopTimer() {
     _timer!.cancel();
+    _timer = null;
+  }
+
+  @override
+  void initState() {
+    work = Provider.of<TabataProvider>(context, listen: false).work;
+    rest = Provider.of<TabataProvider>(context, listen: false).rest;
+    rounds = int.tryParse(
+        Provider.of<TabataProvider>(context, listen: false).rounds)!;
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<TabataProvider>(context);
+    print(provider.onRest);
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -67,9 +122,13 @@ class _TabataTimerPageState extends State<TabataTimerPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  "1/1 - Work",
-                  style: TextStyle(
+                Text(
+                  !provider.onRest
+                      ? "${provider.roundCounter}/$rounds Work"
+                      : !provider.isComplete
+                          ? "${provider.roundCounter}/$rounds Rest"
+                          : "${provider.roundCounter}/$rounds Rounds",
+                  style: const TextStyle(
                       color: Colors.white,
                       fontSize: 36,
                       fontWeight: FontWeight.bold),
@@ -77,107 +136,30 @@ class _TabataTimerPageState extends State<TabataTimerPage> {
                 const SizedBox(
                   height: 10,
                 ),
-                Stack(
-                  children: [
-                    Image.asset(
-                      "assets/progress.png",
-                      width: 380,
-                      height: 370,
-                    ),
-                    Positioned(
-                      width: MediaQuery.of(context).size.width * 0.97,
-                      top: MediaQuery.of(context).size.width * 0.02,
-                      child: CircularPercentIndicator(
-                        backgroundColor: Colors.transparent,
-                        radius: 172.0,
-                        lineWidth: 18.0,
-                        percent: 1 - (seconds.inSeconds / 120),
-                        //center: const Text("100%"),
-                        progressColor: Colors.green,
-                      ),
-                    ),
-                    Positioned(
-                        width: MediaQuery.of(context).size.width * 0.97,
-                        top: MediaQuery.of(context).size.width * 0.17,
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.width * 0.6,
-                          child: !isRunning
-                              ? Column(
-                                  children: !isPaused
-                                      ? [
-                                          MaterialButton(
-                                            onPressed: () {
-                                              startTimer();
-                                              setState(() {
-                                                isRunning = _timer == null
-                                                    ? false
-                                                    : _timer!.isActive;
-                                              });
-                                            },
-                                            child: const Icon(
-                                              Icons.play_arrow,
-                                              color: Colors.green,
-                                              size: 180,
-                                            ),
-                                          ),
-                                          const Text(
-                                            "tap to start",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20),
-                                          ),
-                                        ]
-                                      : [
-                                          MaterialButton(
-                                            onPressed: () {
-                                              startTimer();
-                                              setState(() {
-                                                isRunning = _timer == null
-                                                    ? false
-                                                    : _timer!.isActive;
-                                              });
-                                            },
-                                            child: const Icon(
-                                              Icons.pause,
-                                              color: Colors.green,
-                                              size: 180,
-                                            ),
-                                          ),
-                                          const Text(
-                                            "tap to resume",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20),
-                                          ),
-                                        ],
-                                )
-                              : MaterialButton(
-                                  onPressed: () {
-                                    stopTimer();
-                                    setState(() {
-                                      isPaused = true;
-                                      isRunning = false;
-                                    });
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "${seconds.inMinutes.remainder(60).toString().padLeft(2, '0')} :${seconds.inSeconds.remainder(60).toString().padLeft(2, '0')}",
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 80),
-                                      ),
-                                      const Text(
-                                        "tap to pause",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                        ))
-                  ],
-                ),
+                !provider.isComplete
+                    ? TimerWidget(
+                        percentSeconds: provider.currentPercentSeconds,
+                        onStart: () {
+                          startSet();
+                          provider.isRunning =
+                              _timer == null ? false : _timer!.isActive;
+                        },
+                        onPause: () {
+                          stopTimer();
+                          provider.isPaused = true;
+                          provider.isRunning = false;
+                        },
+                        onResume: () {
+                          timerQueue.addFirst(provider.current);
+                          startNextTimer(isOnResume: true);
+                          provider.isRunning =
+                              _timer == null ? false : _timer!.isActive;
+                        })
+                    : const Expanded(
+                        child: RiveAnimation.asset(
+                        "assets/checkmark_icon.riv",
+                        fit: BoxFit.scaleDown,
+                      ))
                 // CircularSeekBar(
                 //   width: double.infinity,
                 //   height: 300,

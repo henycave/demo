@@ -22,14 +22,11 @@ class CustomDropDown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final provider = Provider.of<TabataProvider>(context);
     return Row(
-      //mainAxisAlignment: MainAxisAlignment.center,
       children: [
         InkWell(
           onTap: () {
             showDialog(
-              //barrierColor: Colors.black,
               context: context,
               builder: (BuildContext context) => BackdropFilter(
                 filter: ImageFilter.blur(sigmaX:0.0,sigmaY:0.0),
@@ -85,7 +82,6 @@ class CustomDropDown extends StatelessWidget {
               //alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 25),
               decoration: BoxDecoration(
-                //color: Colors.teal,
                 border: Border.all(color: Colors.greenAccent, width: 2.0),
                 borderRadius: BorderRadius.circular(14.0),
               ),

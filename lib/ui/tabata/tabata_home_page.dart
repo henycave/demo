@@ -84,7 +84,8 @@ class _TabataHomePageState extends State<TabataHomePage> {
                               provider.work = workDropDownList[index].time;
                               print(provider.work);
                             },
-                            value: "${provider.work.inMinutes.remainder(60).toString().padLeft(2, '0')} :${provider.work.inSeconds.remainder(60).toString().padLeft(2, '0')}",
+                            value:
+                                "${provider.work.inMinutes.remainder(60).toString().padLeft(2, '0')} :${provider.work.inSeconds.remainder(60).toString().padLeft(2, '0')}",
                           ),
                           CustomDropDown(
                             dropDownList: restDropDownList,
@@ -93,7 +94,8 @@ class _TabataHomePageState extends State<TabataHomePage> {
                               provider.rest = restDropDownList[index].time;
                               print(provider.rest);
                             },
-                            value: "${provider.rest.inMinutes.remainder(60).toString().padLeft(2, '0')} :${provider.rest.inSeconds.remainder(60).toString().padLeft(2, '0')}",
+                            value:
+                                "${provider.rest.inMinutes.remainder(60).toString().padLeft(2, '0')} :${provider.rest.inSeconds.remainder(60).toString().padLeft(2, '0')}",
                           ),
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -137,10 +139,14 @@ class _TabataHomePageState extends State<TabataHomePage> {
                   ],
                 ),
                 InkWell(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const TabataTimerPage())),
+                  onTap: () {
+                    provider.resetFromState();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TabataTimerPage()));
+
+                  },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 36, vertical: 10),

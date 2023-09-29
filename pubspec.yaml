@@ -40,6 +40,7 @@ dependencies:
 #  simple_circular_progress_bar: ^1.0.2
 #  circular_seek_bar: ^1.1.1
   percent_indicator: ^4.2.3
+  rive: ^0.11.17
 
 
 
@@ -68,7 +69,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/progress.png
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
